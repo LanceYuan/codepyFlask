@@ -37,6 +37,15 @@ def login_required(func):
             return redirect("/login/?next={}".format(prev_url))
     return inner
 
+
+def homeFunc():
+    return "HTML模板调用函数，并渲染返回数据."
+
+@app.template_global()
+def tmpFunc():
+    return "template_global HTML直接调用，不需要在视图中显示的传递."
+
+
 @app.route('/')
 def hello_world():
     return 'Hello World!'
@@ -81,7 +90,8 @@ def data():
 @app.route('/home/', methods=['GET', 'POST'], endpoint="homeInfo")
 @login_required
 def home():
-    return render_template('home.html', homeInfo=HOME_DATA)
+    # 将函数返回给前端HTML，前端HTML渲染时执行函数.
+    return render_template('home.html', homeInfo=HOME_DATA, func=homeFunc)
 
 
 @app.route('/detail/<int:nid>/', methods=['GET', 'POST'])
