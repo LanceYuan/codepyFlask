@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+
+<table border="1">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>AGE</th>
+            <th>GENDER</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for id, info in homeInfo.items() %}
+            <tr>
+                <td>{{ id }}</td>
+                <td>{{ info.name }}</td>
+                <td>{{ info.age }}</td>
+                <td>{{ info.gender }}</td>
+                <td><a href="/detail/{{ id }}/">祥情</a><a href="/delete/{{ id }}/">删除</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+</body>
+</html>
