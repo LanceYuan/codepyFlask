@@ -15,14 +15,14 @@ HOME_DATA = {
 }
 
 
-@app.before_request          # Flask 自带给所有视图装饰函数.
-def authBeforeRequest():
-    prev_url = request.path
-    if request.path == "/login/":
-        return None          # return None继续执行后面视图函数.
-    if session.get("user"):  # 从Session中获取用户、如果存在说明已认证、继续后续操作。
-        return None
-    return redirect("/login/?next={}".format(prev_url))
+# @app.before_request          # Flask 自带给所有视图装饰函数.
+# def authBeforeRequest():
+#     prev_url = request.path
+#     if request.path == "/login/":
+#         return None          # return None继续执行后面视图函数.
+#     if session.get("user"):  # 从Session中获取用户、如果存在说明已认证、继续后续操作。
+#         return None
+#     return redirect("/login/?next={}".format(prev_url))
 
 # 自定义认证函数.
 def login_required(func):
