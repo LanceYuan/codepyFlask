@@ -24,6 +24,16 @@ HOME_DATA = {
 #         return None
 #     return redirect("/login/?next={}".format(prev_url))
 
+@app.before_request  # 所有请求之前执行的操作, 没有参数，没有返回值。继续后续视图函数操作.
+def f1Before():
+    print("before request.")
+
+@app.after_request   # 所有请求之后执行的操作,必须接收1个参数Response,必须返回一个Response.
+def f2After(response):
+    print("after request.")
+    return response
+
+
 # 自定义认证函数.
 def login_required(func):
     @wraps(func)
