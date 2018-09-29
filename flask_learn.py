@@ -105,5 +105,15 @@ def delete(nid):
     del HOME_DATA[nid]
     return redirect(url_for("homeInfo"))
 
+class appMiddleWare(object):   # Flask中间件，在视图执行之前和之后自定义操作.
+    def __init__(self, app):
+        self.app = app
+    def __call__(self, *args, **kwargs):
+        print("befor")
+        newApp = self.app(*args, **kwargs)
+        print("after")
+        return newApp
+
 if __name__ == '__main__':
+    app.wsgi_app = appMiddleWare(app.wsgi_app)
     app.run()
