@@ -1,5 +1,6 @@
 from flask import Flask, request, redirect, render_template, session, url_for, jsonify, make_response, views
 from functools import wraps
+from user_view import uv
 
 
 app = Flask(__name__)
@@ -130,6 +131,10 @@ class UserInfo(views.MethodView):
 
 # URL和CBV绑定. as_view参数指定endpoints名称.
 app.add_url_rule("/user/<int:nid>/", None, view_func=UserInfo.as_view("UserInfo"))
+
+
+# app中注册蓝图.
+app.register_blueprint(uv)
 
 class appMiddleWare(object):   # Flask中间件，在视图执行之前和之后自定义操作.
     def __init__(self, app):
