@@ -133,8 +133,8 @@ class UserInfo(views.MethodView):
 app.add_url_rule("/user/<int:nid>/", None, view_func=UserInfo.as_view("UserInfo"))
 
 
-# app中注册蓝图.
-app.register_blueprint(uv)
+# app中注册蓝图, url_prefix指定当前注册蓝图下面所有URL的前缀.
+app.register_blueprint(uv, url_prefix="/admin/")
 
 class appMiddleWare(object):   # Flask中间件，在视图执行之前和之后自定义操作.
     def __init__(self, app):
