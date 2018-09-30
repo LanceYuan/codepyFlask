@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, render_template, session, url_for, jsonify, make_response
+from flask import Flask, request, redirect, render_template, session, url_for, jsonify, make_response, views
 from functools import wraps
 
 
@@ -97,7 +97,8 @@ def data():
     return response
 
 
-@app.route('/home/', methods=['GET', 'POST'], endpoint="homeInfo")
+# strict_slashes: URL是否必须输入/结束符.
+@app.route('/home/', methods=['GET', 'POST'], endpoint="homeInfo", strict_slashes=False)
 @login_required
 def home():
     # 将函数返回给前端HTML，前端HTML渲染时执行函数.
@@ -110,10 +111,25 @@ def detail(nid):
     return render_template("detail.html", data=data)
 
 
-@app.route('/delete/<int:nid>/', methods=['GET', 'POST'])
+@app.route('/delete/<int:nid>/', methods=['GET', 'POST'],)
 def delete(nid):
     del HOME_DATA[nid]
     return redirect(url_for("homeInfo"))
+
+
+# CBV: method指定请求的方式, decorators 基于CBV的装饰器.
+class UserInfo(views.MethodView):
+    methods = ["GET", "POST"]
+    decorators = [login_required,]
+    def get(self, *args, **kwargs):
+        id = kwargs.get("nid")
+        return "GET METHODS {}".format(id)
+    def post(self, *args, **kwargs):
+        id = kwargs.get("nid")
+        return "POST METHODS {}".format(id)
+
+# URL和CBV绑定. as_view参数指定endpoints名称.
+app.add_url_rule("/user/<int:nid>/", None, view_func=UserInfo.as_view("UserInfo"))
 
 class appMiddleWare(object):   # Flask中间件，在视图执行之前和之后自定义操作.
     def __init__(self, app):
