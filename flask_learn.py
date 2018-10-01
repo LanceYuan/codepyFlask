@@ -1,11 +1,11 @@
 from flask import Flask, request, redirect, render_template, session, url_for, jsonify, make_response, views
 from functools import wraps
-
+from flask_session import Session
 
 app = Flask(__name__)
-print(app.config)
 # app.config["DEBUG"] = True # 修改flask配置文件.
 app.config.from_object("settings.Dev") # 通过setting.py配置
+Session(app)
 
 HOME_DATA = {
     1: {"name": "Lance", "age": 32, "gender": 1},
