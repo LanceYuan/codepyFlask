@@ -18,10 +18,26 @@ POOL = PooledDB(
     charset="utf8"
 )
 
-conn = POOL.connection()
-cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
-cursor.execute("select * from app01_book")
-data = cursor.fetchall()
-print(data)
-cursor.close()
-conn.close()
+
+class DataBase(object):
+    def conn(self):
+        conn = POOL.connection()
+        # cursor = conn.cursor(cursor=pymysql.cursors.DictCursor)
+        cursor = conn.cursor()
+        # cursor.execute("select * from app01_book")
+        return conn, cursor
+    def get_one(self, sql, args):
+        conn, cursor = self.conn()
+        cursor.execute(sql, args)
+        data = cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return data
+    def get_all(self, sql, args):
+        conn, cursor = self.conn()
+        cursor.execute(sql, args)
+        data = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return data
+

@@ -7,6 +7,7 @@ from wtforms.fields import html5
 from wtforms.fields import core
 from wtforms import widgets
 from wtforms import validators
+from DBpool import DataBase
 
 app = Flask(__name__)
 # app.config["DEBUG"] = True # 修改flask配置文件.
@@ -236,6 +237,23 @@ def wtLogin():
     else:
         return render_template("wtlogin.html", forms=forms) # 提交错误时返回页面并提示错误信息.
 
+
+class Userforms(Form):
+    id = simple.StringField()
+    service = core.SelectField(
+        choices=(),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(Userforms, self).__init__(*args, **kwargs)
+        conn = DataBase()
+        self.service.choices=conn.get_all("select * from userform", []) # 数据变化时,动态更新前端数据. 类的静态字段初始化时生产.
+
+
+@app.route("/db/")
+def db():
+    forms = Userforms()
+    return render_template("user_forms.html", forms=forms)
 
 if __name__ == '__main__':
     app.wsgi_app = appMiddleWare(app.wsgi_app)
