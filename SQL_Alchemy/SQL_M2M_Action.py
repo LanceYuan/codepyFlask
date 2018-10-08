@@ -37,12 +37,17 @@ for row in cor_obj.student_list:
     print("4=====>", cor_obj.title, row.name)
 
 # 通过relationship新增数据. 增加课程、增加2学生，并都选择新的课程.
-cor_obj = Course(title="java")
-cor_obj.student_list = [
-    Student(name="s1"),
-    Student(name="s2"),
-]
-session.add(cor_obj)
+# cor_obj = Course(title="java")
+# cor_obj.student_list = [
+#     Student(name="s1"),
+#     Student(name="s2"),
+# ]
+# session.add(cor_obj)
+
+# SQLalchemy 执行原生SQL.
+cursor = session.execute("select * from student")
+data = cursor.fetchall()
+print(data)
 
 session.commit()
 session.close()

@@ -37,7 +37,7 @@ class Student_Course(Base):
     student_id = Column(Integer, ForeignKey("student.id"), nullable=False)
     course_id = Column(Integer, ForeignKey("course.id"), nullable=False)
     __table_args__ = (
-        UniqueConstraint("student_id", "course_id", name="stu_cou_uni") # 联合唯一索引.
+        UniqueConstraint("student_id", "course_id", name="stu_cou_uni"), # 联合唯一索引.
     )
 
 engine = create_engine(
