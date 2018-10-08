@@ -28,6 +28,21 @@ for row in result:
 result = session.query(Student_Course.id, Student.name, Course.title).join(Student, Student_Course.student_id==Student.id, isouter=True).join(Course, Student_Course.course_id==Course.id).filter(Student.name=="lance").order_by(Student_Course.id.desc())
 for row in result:
     print("2=====>", row)
+# 通过relationship简化查询.
+stu_obj = session.query(Student).filter(Student.name=="lance").first()
+for row in stu_obj.course_list:
+    print("3=====>", stu_obj.name, row.title)
+cor_obj = session.query(Course).filter(Course.title=="Python").first()
+for row in cor_obj.student_list:
+    print("4=====>", cor_obj.title, row.name)
+
+# 通过relationship新增数据. 增加课程、增加2学生，并都选择新的课程.
+cor_obj = Course(title="java")
+cor_obj.student_list = [
+    Student(name="s1"),
+    Student(name="s2"),
+]
+session.add(cor_obj)
 
 session.commit()
 session.close()

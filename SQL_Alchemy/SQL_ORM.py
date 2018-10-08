@@ -1,5 +1,5 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Text, Date, DateTime, create_engine, ForeignKey
+from sqlalchemy import Column, Integer, String, Text, Date, DateTime, create_engine, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 Base = declarative_base()
 
@@ -22,6 +22,7 @@ class Student(Base):
     __tablename__ = "student"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(32), index=True, nullable=False)
+    course_list = relationship("Course", secondary="student_course", backref="student_list") # 注意secondary关联的表名.
 
 
 class Course(Base):
@@ -35,6 +36,9 @@ class Student_Course(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     student_id = Column(Integer, ForeignKey("student.id"), nullable=False)
     course_id = Column(Integer, ForeignKey("course.id"), nullable=False)
+    __table_args__ = (
+        UniqueConstraint("student_id", "course_id", name="stu_cou_uni") # 联合唯一索引.
+    )
 
 engine = create_engine(
     "mysql+pymysql://lance:LANCEyuan88@127.0.0.1:3306/codepy?charset=utf8",
