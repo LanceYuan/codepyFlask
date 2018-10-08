@@ -17,6 +17,25 @@ class SQL_User(Base):
     depart_id = Column(Integer, ForeignKey("depart.id"))
     dp = relationship("Depart", backref="dep")
 
+
+class Student(Base):
+    __tablename__ = "student"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    name = Column(String(32), index=True, nullable=False)
+
+
+class Course(Base):
+    __tablename__ = "course"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(32), index=True, nullable=False)
+
+
+class Student_Course(Base):
+    __tablename__ = "student_course"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    student_id = Column(Integer, ForeignKey("student.id"), nullable=False)
+    course_id = Column(Integer, ForeignKey("course.id"), nullable=False)
+
 engine = create_engine(
     "mysql+pymysql://lance:LANCEyuan88@127.0.0.1:3306/codepy?charset=utf8",
     max_overflow=0, # 超过连接池大小外最多创建的连接。
