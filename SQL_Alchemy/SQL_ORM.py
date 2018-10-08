@@ -1,12 +1,21 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, Text, Date, DateTime, create_engine
+from sqlalchemy import Column, Integer, String, Text, Date, DateTime, create_engine, ForeignKey
+from sqlalchemy.orm import relationship
 Base = declarative_base()
+
+
+class Depart(Base):
+    __tablename__ = "depart"
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(32), index=True, nullable=False)
+
 
 class SQL_User(Base):
     __tablename__ = "sql_user"
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String(32), index=True, nullable=False)
-    depart_id = Column(Integer)
+    depart_id = Column(Integer, ForeignKey("depart.id"))
+    dp = relationship("Depart", backref="dep")
 
 engine = create_engine(
     "mysql+pymysql://lance:LANCEyuan88@127.0.0.1:3306/codepy?charset=utf8",
