@@ -1,12 +1,20 @@
 from flask import Flask, request, redirect, render_template, session, url_for, jsonify, make_response, views
 from functools import wraps
 from user_view import uv
+from flask_session import Session
+from wtforms import Form
+from wtforms.fields import simple
+from wtforms.fields import html5
+from wtforms.fields import core
+from wtforms import widgets
+from wtforms import validators
+from DBpool import DataBase
 
 
 app = Flask(__name__)
-print(app.config)
 # app.config["DEBUG"] = True # 修改flask配置文件.
 app.config.from_object("settings.Dev") # 通过setting.py配置
+Session(app)
 
 HOME_DATA = {
     1: {"name": "Lance", "age": 32, "gender": 1},
@@ -144,6 +152,114 @@ class appMiddleWare(object):   # Flask中间件，在视图执行之前和之后
         newApp = self.app(*args, **kwargs)
         print("after")
         return newApp
+
+
+class RegisterForm(Form):
+    name = simple.StringField(
+        label='用户名',
+        validators=[
+            validators.DataRequired(message="用户名不能为空")
+        ],
+        widget=widgets.TextInput(),
+        render_kw={'class': 'form-control'},
+        default='alex'
+    )
+
+    pwd = simple.PasswordField(
+        label='密码',
+        validators=[
+            validators.DataRequired(message='密码不能为空.')
+        ],
+        widget=widgets.PasswordInput(),
+        render_kw={'class': 'form-control'}
+    )
+
+    pwd_confirm = simple.PasswordField(
+        label='重复密码',
+        validators=[
+            validators.DataRequired(message='重复密码不能为空.'),
+            validators.EqualTo('pwd', message="两次密码输入不一致") # 校验密码一致
+        ],
+        widget=widgets.PasswordInput(),
+        render_kw={'class': 'form-control'}
+    )
+
+    email = html5.EmailField(
+        label='邮箱',
+        validators=[
+            validators.DataRequired(message='邮箱不能为空.'),
+            validators.Email(message='邮箱格式错误')
+        ],
+        widget=widgets.TextInput(input_type='email'),
+        render_kw={'class': 'form-control'}
+    )
+
+    gender = core.RadioField(
+        label='性别',
+        choices=(
+            (1, '男'),
+            (2, '女'),
+        ),
+        coerce=int # int("1") 前端提交数据默认为字符串类型,coerce设置后端接收到后为int.
+    )
+    city = core.SelectField(
+        label='城市',
+        choices=(
+            ('bj', '北京'),
+            ('sh', '上海'),
+        )
+    )
+
+    hobby = core.SelectMultipleField(
+        label='爱好',
+        choices=(
+            (1, '篮球'),
+            (2, '足球'),
+        ),
+        coerce=int
+    )
+
+    favor = core.SelectMultipleField(
+        label='喜好',
+        choices=(
+            (1, '篮球'),
+            (2, '足球'),
+        ),
+        widget=widgets.ListWidget(prefix_label=False),
+        option_widget=widgets.CheckboxInput(),
+        coerce=int,
+        default=[1, ]
+    )
+
+@app.route("/wtlogin/", methods=["GET", "POST"])
+def wtLogin():
+    if request.method == "GET":
+        forms = RegisterForm()
+        return render_template("wtlogin.html", forms=forms)
+    forms = RegisterForm(formdata=request.form)
+    if forms.validate():
+        data = forms.data  # 验证成功后获取到的数据.
+        return jsonify(data)
+    else:
+        return render_template("wtlogin.html", forms=forms) # 提交错误时返回页面并提示错误信息.
+
+
+class Userforms(Form):
+    id = simple.StringField()
+    service = core.SelectField(
+        choices=(),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super(Userforms, self).__init__(*args, **kwargs)
+        conn = DataBase()
+        self.service.choices=conn.get_all("select * from userform", []) # 数据变化时,动态更新前端数据. 类的静态字段初始化时生产.
+
+
+@app.route("/db/")
+def db():
+    forms = Userforms()
+    return render_template("user_forms.html", forms=forms)
 
 if __name__ == '__main__':
     app.wsgi_app = appMiddleWare(app.wsgi_app)

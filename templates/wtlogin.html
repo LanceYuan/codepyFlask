@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block page_main %}
+    <form action="" novalidate method="post">
+        {% for field in forms %}
+            <p>{{ field.label }}:{{ field }}{{ field.errors.0 }}</p>
+        {% endfor %}
+        <input type="submit" value="提交">
+    </form>
+{% endblock %}
